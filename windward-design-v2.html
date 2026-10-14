@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Windward — Design v0.2 · One more day</title>
+<style>
+  :root{
+    --ink:#0A1220;
+    --panel:#101C30;
+    --panel-2:#152540;
+    --line:#22344F;
+    --text:#E9EFF8;
+    --muted:#8FA2BC;
+    --faint:#5C6E88;
+    --calm:#38C6A6;
+    --watch:#F5A83C;
+    --alert:#F4593B;
+    --track:#7FB4FF;
+    --track-bright:#CFE4FF;
+    --land:#16283F;
+    --mono:"SF Mono","Cascadia Code","Roboto Mono",ui-monospace,Menlo,monospace;
+    --sans:-apple-system,"Segoe UI",Inter,Roboto,"Helvetica Neue",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:linear-gradient(180deg,#070D18 0%,#0A1220 55%,#0B1526 100%);
+    color:var(--text);font-family:var(--sans);min-height:100vh;padding:56px 24px 72px;
+  }
+  .wrap{max-width:1180px;margin:0 auto}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--faint);text-transform:uppercase}
+  h1.wordmark{font-family:var(--mono);font-weight:700;font-size:clamp(38px,6vw,58px);letter-spacing:.04em;margin:10px 0 4px}
+  h1 .ward{color:var(--watch)}
+  .promise{font-family:var(--mono);font-size:15px;letter-spacing:.14em;color:var(--watch);text-transform:uppercase;margin-bottom:12px}
+  .tagline{color:var(--muted);font-size:16.5px;max-width:60ch;line-height:1.6}
+  .tagline b{color:var(--text);font-weight:600}
+  .header-rule{height:1px;background:linear-gradient(90deg,var(--watch),transparent 60%);margin:26px 0 42px;opacity:.5}
+
+  .screens{display:flex;gap:38px;flex-wrap:wrap;justify-content:center;align-items:flex-start}
+  .screen-col{width:330px;max-width:100%}
+  .phone{width:330px;max-width:100%;border-radius:42px;padding:11px;background:#04070D;border:1px solid #1B2A42;
+    box-shadow:0 40px 80px -30px rgba(0,0,0,.8)}
+  .display{border-radius:33px;overflow:hidden;background:var(--ink);border:1px solid #14213A}
+  .notch{height:24px;display:flex;align-items:center;justify-content:center}
+  .notch::after{content:"";width:92px;height:8px;border-radius:8px;background:#04070D}
+  .app{padding:6px 15px 0;display:flex;flex-direction:column;min-height:646px}
+
+  .caption{margin-top:18px}
+  .caption h3{font-size:12.5px;font-family:var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--watch);margin-bottom:9px}
+  .caption p{font-size:13px;line-height:1.6;color:var(--muted);margin-bottom:7px}
+  .caption p b{color:var(--text);font-weight:600}
+
+  .loc-row{display:flex;justify-content:space-between;align-items:center;padding:6px 2px 12px}
+  .loc{font-size:14px;font-weight:600}
+  .loc small{display:block;font-weight:400;color:var(--faint);font-size:11px;margin-top:2px}
+  .season{font-family:var(--mono);font-size:10px;color:var(--faint);letter-spacing:.08em;border:1px solid var(--line);border-radius:999px;padding:4px 9px}
+
+  .tabbar{margin-top:auto;display:flex;border-top:1px solid var(--line);padding:11px 6px 15px;justify-content:space-around}
+  .tab{font-size:10px;color:var(--faint);text-align:center}
+  .tab .dot{width:19px;height:19px;border-radius:6px;background:var(--panel-2);margin:0 auto 5px;border:1px solid var(--line)}
+  .tab.active{color:var(--watch)}
+  .tab.active .dot{background:rgba(245,168,60,.16);border-color:rgba(245,168,60,.5)}
+  .bom-strip{display:flex;align-items:center;gap:8px;justify-content:center;font-size:10px;color:var(--faint);padding:8px 0;border-top:1px dashed var(--line)}
+  .bom-strip .b{font-family:var(--mono);letter-spacing:.06em}
+
+  /* ---- the day banner : the new spine ---- */
+  .daybar{
+    display:flex;align-items:center;gap:11px;
+    background:linear-gradient(90deg,rgba(245,168,60,.16),rgba(245,168,60,.03));
+    border:1px solid rgba(245,168,60,.4);border-left:3px solid var(--watch);
+    border-radius:12px;padding:11px 12px;margin-bottom:15px
+  }
+  .daybar .big{font-family:var(--mono);font-size:27px;font-weight:700;color:var(--watch);line-height:1}
+  .daybar .txt{font-size:11.5px;line-height:1.45;color:var(--text)}
+  .daybar .txt small{display:block;color:var(--muted);font-size:10.5px;margin-top:2px}
+
+  .hero-num{display:flex;align-items:baseline;gap:7px}
+  .hero-num .n{font-family:var(--mono);font-size:72px;font-weight:700;line-height:.95}
+  .hero-num .pct{font-family:var(--mono);font-size:26px;color:var(--muted)}
+  .hero-label{font-size:12px;color:var(--muted);line-height:1.5;margin-top:7px;max-width:33ch}
+  .hero-label b{color:var(--text)}
+  .trend{display:inline-flex;gap:5px;font-family:var(--mono);font-size:11px;color:var(--watch);margin-top:8px}
+  .arrival{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);border-top:1px solid var(--line);margin-top:13px;padding-top:10px}
+  .arrival .v{font-family:var(--mono);color:var(--text)}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:13px;margin-top:12px}
+  .card.hi{border-color:rgba(245,168,60,.45);background:linear-gradient(180deg,rgba(245,168,60,.07),var(--panel))}
+  .card .k{font-size:10px;font-family:var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--faint);margin-bottom:6px}
+  .card.hi .k{color:var(--watch)}
+  .card .t{font-size:12.5px;line-height:1.5}
+  .card .t b{color:var(--watch)}
+  .card .cta{display:inline-block;margin-top:9px;font-size:12px;font-weight:600;color:var(--ink);background:var(--watch);border-radius:9px;padding:7px 13px}
+  .card.sys{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .card.sys .arrow{color:var(--watch);font-size:18px}
+
+  .fortnight{margin-top:15px}
+  .fortnight .lbl{font-size:10px;font-family:var(--mono);letter-spacing:.11em;color:var(--faint);text-transform:uppercase;margin-bottom:7px;display:flex;justify-content:space-between}
+  .bars{display:flex;align-items:flex-end;gap:3px;height:38px}
+  .bars span{flex:1;background:var(--panel-2);border-radius:2px 2px 0 0}
+  .bars span.w{background:linear-gradient(180deg,var(--watch),rgba(245,168,60,.35))}
+
+  /* ---- replay screen ---- */
+  .replay-head{padding:2px 2px 12px}
+  .replay-head .k{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--faint);text-transform:uppercase}
+  .replay-head h4{font-size:19px;margin:5px 0 3px}
+  .replay-head p{font-size:11.5px;color:var(--muted);line-height:1.45}
+
+  .gapcard{
+    border:1px solid rgba(56,198,166,.4);background:linear-gradient(180deg,rgba(56,198,166,.10),rgba(56,198,166,.02));
+    border-radius:15px;padding:14px;text-align:center;margin-bottom:14px
+  }
+  .gapcard .n{font-family:var(--mono);font-size:44px;font-weight:700;color:var(--calm);line-height:1}
+  .gapcard .u{font-family:var(--mono);font-size:12px;color:var(--calm);letter-spacing:.14em;text-transform:uppercase;margin-top:3px}
+  .gapcard .d{font-size:11.5px;color:var(--muted);margin-top:7px;line-height:1.45}
+
+  .timeline{position:relative;padding:6px 0 0}
+  .trow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+  .trow:last-child{border-bottom:0}
+  .trow .when{font-family:var(--mono);font-size:10px;color:var(--faint);width:52px;flex:none}
+  .trow .bar{flex:1;height:22px;border-radius:5px;background:var(--panel-2);position:relative;overflow:hidden}
+  .trow .bar i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,rgba(245,168,60,.7),rgba(245,168,60,.35));border-radius:5px}
+  .trow .val{font-family:var(--mono);font-size:11px;width:34px;text-align:right;flex:none;color:var(--muted)}
+  .trow.fire .val{color:var(--watch);font-weight:700}
+  .trow.fire .when{color:var(--watch)}
+  .marker{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;padding:7px 0;text-transform:uppercase}
+  .marker.w{color:var(--watch)}
+  .marker.b{color:var(--track)}
+  .marker .ln{flex:1;height:1px}
+  .marker.w .ln{background:linear-gradient(90deg,var(--watch),transparent)}
+  .marker.b .ln{background:linear-gradient(90deg,var(--track),transparent)}
+
+  /* ---- tracker map ---- */
+  .map-shell{position:relative;height:452px;overflow:hidden}
+  .chips{position:absolute;top:10px;left:12px;right:12px;display:flex;gap:6px;flex-wrap:wrap}
+  .chip{font-size:10px;font-family:var(--mono);color:var(--muted);border:1px solid var(--line);background:rgba(10,18,32,.82);border-radius:999px;padding:5px 10px}
+  .chip.on{color:var(--ink);background:var(--track-bright);border-color:var(--track-bright);font-weight:700}
+  .legend{position:absolute;left:12px;bottom:12px;font-size:9.5px;color:var(--faint);background:rgba(10,18,32,.82);border:1px solid var(--line);border-radius:8px;padding:6px 9px}
+  .legend i{display:inline-block;width:14px;height:2px;background:var(--track);vertical-align:middle;margin-right:6px}
+  .scrubber{padding:12px 15px 4px}
+  .scrub-lbl{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:9px}
+  .scrub-lbl b{color:var(--text)}
+  .rail{position:relative;height:4px;border-radius:4px;background:var(--panel-2)}
+  .rail .fill{position:absolute;left:0;top:0;bottom:0;width:53%;background:linear-gradient(90deg,var(--calm),var(--watch));border-radius:4px}
+  .rail .handle{position:absolute;left:53%;top:50%;transform:translate(-50%,-50%);width:15px;height:15px;border-radius:50%;background:var(--text);border:3px solid var(--watch)}
+  .rail-ticks{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--faint);margin-top:7px}
+
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .zone-anim{animation:pulse 3.2s ease-in-out infinite}
+  @media (prefers-reduced-motion: reduce){.zone-anim{animation:none}}
+
+  .foot{margin-top:60px;border-top:1px solid var(--line);padding-top:20px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;font-size:12px;color:var(--faint);line-height:1.6}
+  .foot .mono{font-family:var(--mono);letter-spacing:.07em}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Design v0.2 · reframed around lead time</div>
+    <h1 class="wordmark">WIND<span class="ward">WARD</span></h1>
+    <div class="promise">One more day to get ready</div>
+    <p class="tagline"><b>WeatherNext 2 buys you about an extra day of warning. Windward is the app that hands it to you.</b> One number for your address, the date you need to act, and proof — replayed against real storms — of how much earlier you'd have known. Official warnings always come from the Bureau of Meteorology.</p>
+    <div class="header-rule"></div>
+  </header>
+
+  <div class="screens">
+
+    <!-- ============ 1 · HOME ============ -->
+    <div class="screen-col">
+      <div class="phone"><div class="display">
+        <div class="notch"></div>
+        <div class="app">
+          <div class="loc-row">
+            <div class="loc">Trinity Beach <small>Cairns · QLD</small></div>
+            <div class="season">SEASON&nbsp;26–27</div>
+          </div>
+
+          <div class="daybar">
+            <div class="big">+1<span style="font-size:15px">d</span></div>
+            <div class="txt">You're seeing this about a day before a standard forecast would show it.
+              <small>Head start · started Mon 3:00pm</small></div>
+          </div>
+
+          <div class="hero-num"><span class="n">23</span><span class="pct">%</span></div>
+          <div class="hero-label">chance of <b>gale-force winds (63+ km/h)</b> at this address in the next 15 days</div>
+          <div class="trend">▲ +9 since yesterday</div>
+
+          <div class="arrival"><span>If it comes, winds arrive</span><span class="v">Fri 2–9am</span></div>
+          <div class="arrival" style="border-top:0;padding-top:4px"><span>Destructive winds (125+)</span><span class="v">6%</span></div>
+
+          <div class="fortnight">
+            <div class="lbl"><span>Next 15 days</span><span>7 → 21 Jan</span></div>
+            <div class="bars">
+              <span style="height:8%"></span><span style="height:8%"></span><span style="height:12%"></span>
+              <span style="height:14%"></span><span style="height:20%"></span><span style="height:28%"></span>
+              <span class="w" style="height:58%"></span><span class="w" style="height:86%"></span><span class="w" style="height:100%"></span>
+              <span class="w" style="height:72%"></span><span style="height:38%"></span><span style="height:24%"></span>
+              <span style="height:16%"></span><span style="height:10%"></span><span style="height:8%"></span>
+            </div>
+          </div>
+
+          <div class="card hi">
+            <div class="k">Use the day · act by Tue 12 Jan</div>
+            <div class="t">Do the calm jobs now while shops are stocked and roads are open: <b>fuel, water, scripts, gutters.</b></div>
+            <span class="cta">Start 5 calm jobs</span>
+          </div>
+
+          <div class="card sys">
+            <div><div class="k">Watching · Coral Sea</div>
+              <div class="t">Forms in <b>41% of scenarios</b> · 1 in 5 intensify fast</div></div>
+            <div class="arrow">›</div>
+          </div>
+
+          <div class="tabbar">
+            <div class="tab active"><div class="dot"></div>Home</div>
+            <div class="tab"><div class="dot"></div>Map</div>
+            <div class="tab"><div class="dot"></div>Prepare</div>
+            <div class="tab"><div class="dot"></div>Replay</div>
+          </div>
+          <div class="bom-strip"><span class="b">NO BOM WARNINGS CURRENT</span><span>·</span><span>bom.gov.au ↗</span></div>
+        </div>
+      </div></div>
+      <div class="caption">
+        <h3>01 — Home · the day, up top</h3>
+        <p><b>The head-start banner is now the first thing you see</b>, above the probability. It names the product's whole value in one line and timestamps when your extra day began.</p>
+        <p>The action card is retitled <b>"Use the day"</b> — framed as calm jobs done early, not panic jobs done late. Arrival window and rapid-intensification flag come straight from the ensemble.</p>
+      </div>
+    </div>
+
+    <!-- ============ 2 · REPLAY (the proof) ============ -->
+    <div class="screen-col">
+      <div class="phone"><div class="display">
+        <div class="notch"></div>
+        <div class="app">
+          <div class="replay-head">
+            <div class="k">Replay · real storm</div>
+            <h4>Cyclone Alfred · Mar 2025</h4>
+            <p>What Windward would have shown Brisbane, day by day, against the official timeline.</p>
+          </div>
+
+          <div class="gapcard">
+            <div class="n">27</div>
+            <div class="u">hours earlier</div>
+            <div class="d">Windward crossed "get ready" this much before the official watch was issued.</div>
+          </div>
+
+          <div class="timeline">
+            <div class="trow"><span class="when">−9d</span><span class="bar"><i style="width:6%"></i></span><span class="val">6%</span></div>
+            <div class="trow"><span class="when">−8d</span><span class="bar"><i style="width:11%"></i></span><span class="val">11%</span></div>
+            <div class="trow"><span class="when">−7d</span><span class="bar"><i style="width:19%"></i></span><span class="val">19%</span></div>
+            <div class="marker w"><span>▲ Windward · heads up</span><span class="ln"></span></div>
+            <div class="trow fire"><span class="when">−6d</span><span class="bar"><i style="width:34%"></i></span><span class="val">34%</span></div>
+            <div class="trow"><span class="when">−5d</span><span class="bar"><i style="width:52%"></i></span><span class="val">52%</span></div>
+            <div class="marker w"><span>▲ Windward · get ready</span><span class="ln"></span></div>
+            <div class="trow fire"><span class="when">−4d</span><span class="bar"><i style="width:71%"></i></span><span class="val">71%</span></div>
+            <div class="marker b"><span>◆ BOM cyclone watch issued</span><span class="ln"></span></div>
+            <div class="trow"><span class="when">−3d</span><span class="bar"><i style="width:88%"></i></span><span class="val">88%</span></div>
+            <div class="trow"><span class="when">−2d</span><span class="bar"><i style="width:96%"></i></span><span class="val">96%</span></div>
+          </div>
+
+          <div class="card" style="margin-top:14px">
+            <div class="k">Also try</div>
+            <div class="t">Jasper 2023 · Kirrily 2024 · Zelia 2025</div>
+          </div>
+
+          <div class="tabbar">
+            <div class="tab"><div class="dot"></div>Home</div>
+            <div class="tab"><div class="dot"></div>Map</div>
+            <div class="tab"><div class="dot"></div>Prepare</div>
+            <div class="tab active"><div class="dot"></div>Replay</div>
+          </div>
+          <div class="bom-strip"><span class="b">HISTORICAL RECONSTRUCTION · NOT A FORECAST</span></div>
+        </div>
+      </div></div>
+      <div class="caption">
+        <h3>02 — Replay · proof of the day</h3>
+        <p><b>This screen is the whole pitch.</b> A real storm, our probability climbing day by day, and the exact gap between our threshold and the official watch — stated in hours, not marketing language.</p>
+        <p>It's the press demo, the trust-builder, the onboarding tutorial, and the thing that keeps the app alive in the off-season. Timeline figures shown are placeholders until we run the real hindcasts.</p>
+      </div>
+    </div>
+
+    <!-- ============ 3 · TRACKER ============ -->
+    <div class="screen-col">
+      <div class="phone"><div class="display">
+        <div class="notch"></div>
+        <div class="app" style="padding-left:0;padding-right:0">
+          <div class="map-shell">
+            <svg viewBox="0 0 306 452" width="100%" height="452" role="img" aria-label="Queensland coast with a fan of ensemble cyclone tracks from a Coral Sea formation zone toward Cairns">
+              <defs>
+                <radialGradient id="wr" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#F5A83C" stop-opacity=".32"/>
+                  <stop offset="60%" stop-color="#F5A83C" stop-opacity=".11"/>
+                  <stop offset="100%" stop-color="#F5A83C" stop-opacity="0"/>
+                </radialGradient>
+                <linearGradient id="sea2" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#0A1424"/><stop offset="100%" stop-color="#0C1930"/>
+                </linearGradient>
+              </defs>
+              <rect width="306" height="452" fill="url(#sea2)"/>
+              <path d="M -10 452 L -10 114 Q 18 66 50 32 Q 63 15 71 8
+                       Q 81 29 85 50 Q 89 71 81 88 Q 93 107 99 128
+                       Q 104 145 97 157 Q 108 174 112 197 Q 116 218 108 229
+                       Q 119 246 125 271 Q 131 294 142 311 Q 156 332 162 355
+                       Q 169 382 185 403 Q 196 424 206 452 Z"
+                    fill="var(--land)" stroke="#24405F" stroke-width="1.2"/>
+              <path d="M 104 88 Q 123 134 133 187 Q 142 240 161 292 Q 178 336 202 378"
+                    fill="none" stroke="#2E4A6B" stroke-width="2" stroke-dasharray="2 7" opacity=".7"/>
+              <circle cx="117" cy="218" r="82" fill="url(#wr)"/>
+              <g stroke="var(--track)" fill="none" stroke-width="1.2" stroke-linecap="round">
+                <path opacity=".38" d="M 242 92 Q 202 113 172 143 Q 143 172 108 197"/>
+                <path opacity=".30" d="M 248 100 Q 206 122 177 155 Q 148 187 113 212"/>
+                <path opacity=".45" d="M 240 107 Q 200 130 173 165 Q 146 197 115 222"/>
+                <path opacity=".30" d="M 252 107 Q 211 136 182 172 Q 154 207 121 236"/>
+                <path opacity=".26" d="M 246 117 Q 207 146 184 184 Q 161 222 130 257"/>
+                <path opacity=".34" d="M 254 121 Q 217 153 192 195 Q 169 235 140 276"/>
+                <path opacity=".24" d="M 258 126 Q 223 165 202 211 Q 182 252 155 302"/>
+                <path opacity=".20" d="M 260 134 Q 231 178 215 230 Q 202 276 179 329"/>
+                <path opacity=".26" d="M 236 86 Q 192 101 157 126 Q 127 149 96 164"/>
+                <path opacity=".20" d="M 234 80 Q 188 90 152 107 Q 119 124 90 134"/>
+                <path opacity=".18" d="M 256 92 Q 227 124 217 168 Q 209 210 215 256 Q 219 293 234 329"/>
+                <path opacity=".15" d="M 262 100 Q 240 142 238 191 Q 236 241 252 287"/>
+                <path opacity=".13" d="M 266 111 Q 252 161 258 214 Q 264 264 281 306"/>
+                <path opacity=".16" d="M 231 92 Q 217 134 223 182 Q 229 226 248 266"/>
+                <path opacity=".12" d="M 268 123 Q 264 176 277 229 Q 287 271 300 306"/>
+              </g>
+              <path d="M 244 103 Q 202 126 173 161 Q 144 194 114 218"
+                    fill="none" stroke="var(--track-bright)" stroke-width="2.2" stroke-dasharray="6 5" stroke-linecap="round"/>
+              <g class="zone-anim">
+                <ellipse cx="246" cy="103" rx="40" ry="29" fill="rgba(245,168,60,.10)" stroke="var(--watch)" stroke-width="1.4" stroke-dasharray="5 5"/>
+              </g>
+              <text x="246" y="63" text-anchor="middle" font-family="var(--mono)" font-size="9.5" fill="var(--watch)" letter-spacing="1">FORMATION ZONE</text>
+              <text x="246" y="107" text-anchor="middle" font-family="var(--mono)" font-size="15" font-weight="700" fill="var(--watch)">41%</text>
+              <g font-family="var(--mono)" font-size="9" fill="var(--faint)">
+                <circle cx="96" cy="158" r="2" fill="var(--faint)"/><text x="88" y="150" text-anchor="end">Cooktown</text>
+                <circle cx="140" cy="307" r="2" fill="var(--faint)"/><text x="132" y="321" text-anchor="end">Townsville</text>
+              </g>
+              <circle cx="114" cy="218" r="4.5" fill="var(--watch)" stroke="var(--ink)" stroke-width="2"/>
+              <rect x="27" y="203" width="72" height="25" rx="8" fill="#0A1220" stroke="var(--watch)"/>
+              <text x="63" y="220" text-anchor="middle" font-family="var(--mono)" font-size="11" font-weight="700" fill="var(--text)">Cairns 23%</text>
+            </svg>
+            <div class="chips">
+              <span class="chip on">Scenarios</span><span class="chip">Density</span><span class="chip">Rain</span><span class="chip">Official</span>
+            </div>
+            <div class="legend"><i></i>Each line = one of 1,000 scenarios</div>
+          </div>
+          <div class="scrubber">
+            <div class="scrub-lbl"><span>Forecast time</span><b>+8 days · Thu 14 Jan</b></div>
+            <div class="rail"><div class="fill"></div><div class="handle"></div></div>
+            <div class="rail-ticks"><span>NOW</span><span>+5d</span><span>+10d</span><span>+15d</span></div>
+          </div>
+          <div class="tabbar">
+            <div class="tab"><div class="dot"></div>Home</div>
+            <div class="tab active"><div class="dot"></div>Map</div>
+            <div class="tab"><div class="dot"></div>Prepare</div>
+            <div class="tab"><div class="dot"></div>Replay</div>
+          </div>
+          <div class="bom-strip"><span class="b">NO BOM WARNINGS CURRENT</span><span>·</span><span>bom.gov.au ↗</span></div>
+        </div>
+      </div></div>
+      <div class="caption">
+        <h3>03 — Tracker · the ensemble fan</h3>
+        <p><b>Unchanged, and still the signature visual.</b> Every faint line is one WeatherNext 2 scenario; tracks that miss are drawn too, because showing the misses is what makes the hits believable.</p>
+        <p>New: a <b>Rain</b> layer for the flooding-rain risk that does most of the damage in Australian cyclones, and a reverse scrub to watch the fan tighten run over run.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="foot">
+    <div style="max-width:62ch">Windward is a preparedness layer, not a warning service. The extra lead time is an average improvement, not a guarantee on every storm — the Replay and calibration screens show performance case by case. Official warnings, watches and advice come from the Bureau of Meteorology and state emergency services.</div>
+    <div class="mono">ENGINE — WeatherNext 2 ensemble, all screens<br>PROMISE — one more day to get ready<br>PROOF — Replay lead-time gap, per storm</div>
+  </footer>
+
+</div>
+</body>
+</html>

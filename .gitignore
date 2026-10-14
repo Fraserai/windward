@@ -1,0 +1,23 @@
+
+# --- added for GitHub backup (keeps secrets & bulky files out) ---
+node_modules/
+.next/
+.svelte-kit/
+dist/
+out/
+.turbo/
+.vercel/
+.venv/
+venv/
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.ci
+.DS_Store
+*.log
+*.tsbuildinfo
+.expo/
+.claude/settings.local.json
