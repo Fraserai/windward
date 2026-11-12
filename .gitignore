@@ -21,3 +21,37 @@ __pycache__/
 *.tsbuildinfo
 .expo/
 .claude/settings.local.json
+# >>> backup-safe-ignores (added before moving off this Mac)
+.DS_Store
+node_modules/
+node_modules 2/
+.next/
+.next*/
+.next-build/
+.turbo/
+.vercel/
+.expo/
+.venv/
+venv/
+__pycache__/
+*.pyc
+Pods/
+ios/build/
+android/build/
+android/.gradle/
+.derived/
+DerivedData/
+module-cache/
+.local/
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+*.pem
+id_rsa*
+*.safetensors
+*.gguf
+*.ckpt
+*.log
+# <<< backup-safe-ignores
